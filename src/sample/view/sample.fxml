@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<GridPane alignment="center" hgap="10" vgap="10" xmlns="http://javafx.com/javafx/10.0.2-internal" xmlns:fx="http://javafx.com/fxml/1" fx:controller="sample.Controller">
+   <columnConstraints>
+      <ColumnConstraints />
+   </columnConstraints>
+   <rowConstraints>
+      <RowConstraints />
+      <RowConstraints />
+   </rowConstraints>
+   <children>
+      <HBox GridPane.rowIndex="1">
+         <children>
+            <VBox>
+               <children>
+                  <Pane fx:id="pane3D" prefHeight="600.0" prefWidth="600.0" />
+                  <GridPane>
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <TextField fx:id="texteAnnee" text="2020" GridPane.columnIndex="1" />
+                        <RadioButton mnemonicParsing="false" text="quadrilatère">
+                           <toggleGroup>
+                              <ToggleGroup fx:id="mode" />
+                           </toggleGroup>
+                        </RadioButton>
+                        <RadioButton mnemonicParsing="false" text="Histogramme" toggleGroup="$mode" GridPane.rowIndex="1" />
+                        <Slider fx:id="sliderAnnee" max="2020.0" min="1880.0" value="2020.0" GridPane.columnIndex="1" GridPane.columnSpan="2147483647" GridPane.rowIndex="1" />
+                     </children>
+                  </GridPane>
+               </children>
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+            </VBox>
+            <VBox prefHeight="200.0" prefWidth="200.0">
+               <children>
+                  <Label fx:id="labelAnnee" text="2020">
+                     <VBox.margin>
+                        <Insets bottom="25.0" left="25.0" right="25.0" top="25.0" />
+                     </VBox.margin>
+                     <font>
+                        <Font size="18.0" />
+                     </font>
+                  </Label>
+                  <Pane prefHeight="30.0" prefWidth="200.0" style="-fx-background-color: #ff2e2e;" />
+                  <Pane layoutX="10.0" layoutY="87.0" prefHeight="30.0" prefWidth="200.0" style="-fx-background-color: #ff3b3b;" />
+                  <Pane layoutX="10.0" layoutY="137.0" prefHeight="30.0" prefWidth="200.0" style="-fx-background-color: #ff4747;" />
+                  <Pane layoutX="10.0" layoutY="187.0" prefHeight="30.0" prefWidth="200.0" style="-fx-background-color: #ff5454;" />
+                  <Pane layoutX="10.0" layoutY="237.0" prefHeight="30.0" prefWidth="200.0" style="-fx-background-color: #ff6161;" />
+                  <Pane layoutX="10.0" layoutY="287.0" prefHeight="30.0" prefWidth="200.0" style="-fx-background-color: #adadff;" />
+                  <Pane layoutX="10.0" layoutY="337.0" prefHeight="30.0" prefWidth="200.0" style="-fx-background-color: #9494ff;" />
+                  <Pane layoutX="10.0" layoutY="387.0" prefHeight="30.0" prefWidth="200.0" style="-fx-background-color: #7a7aff;" />
+                  <Pane layoutX="10.0" layoutY="437.0" prefHeight="30.0" prefWidth="200.0" style="-fx-background-color: #6161ff;" />
+                  <Pane layoutX="10.0" layoutY="487.0" prefHeight="30.0" prefWidth="200.0" style="-fx-background-color: #4747ff;" />
+                  <GridPane>
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <TextField fx:id="latitude" promptText="latitude" />
+                        <TextField fx:id="longitude" promptText="longitude" GridPane.columnIndex="1" />
+                     </children>
+                     <VBox.margin>
+                        <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+                     </VBox.margin>
+                  </GridPane>
+                  <GridPane>
+                    <columnConstraints>
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    </columnConstraints>
+                    <rowConstraints>
+                      <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    </rowConstraints>
+                     <children>
+                        <Button fx:id="annimation" mnemonicParsing="false" text="Play/Pause" />
+                        <SplitMenuButton fx:id="vitesse" mnemonicParsing="false" text="vitesse" GridPane.columnIndex="1">
+                          <items>
+                            <MenuItem mnemonicParsing="false" text="x0.5" />
+                            <MenuItem mnemonicParsing="false" text="x1" />
+                            <MenuItem mnemonicParsing="false" text="x2" />
+                            <MenuItem mnemonicParsing="false" text="x4" />
+                          </items>
+                        </SplitMenuButton>
+                     </children>
+                  </GridPane>
+                  <Pane fx:id="graphique" prefHeight="200.0" prefWidth="200.0" />
+               </children></VBox>
+         </children>
+         <padding>
+            <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
+         </padding>
+      </HBox>
+   </children>
+</GridPane>

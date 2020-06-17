@@ -1,5 +1,10 @@
 package sample.data;
 
+import javafx.scene.control.Label;
+import javafx.scene.control.Slider;
+import javafx.scene.control.TextField;
+import sample.view.Earth;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -17,6 +22,10 @@ public class Data implements IData {
     private float min;
     private float max;
     private String firstYear;
+    private Earth earth;
+    private Label label;
+    private Slider slider;
+    private TextField textField;
 
     public Data(String file){
         mapTemperature = new HashMap<>();
@@ -26,10 +35,35 @@ public class Data implements IData {
         initData(file);
     }
 
+    public void setEarth(Earth earth) {
+        this.earth = earth;
+    }
+
+    public void setLabel(Label label) {
+        this.label = label;
+    }
+
+    public void setTextField(TextField textField) {
+        this.textField = textField;
+    }
+
+    public void setSlider(Slider slider) {
+        this.slider = slider;
+    }
+
+    public void setSelectAnnee(String Annee) {
+        this.selectAnnee = Annee;
+        slider.adjustValue(Double.parseDouble(Annee));
+        textField.setText(Annee);
+        label.setText(Annee);
+    }
+
     /**
      * charge les donnés depuis un fichier
      * @param file le fichier à charger au format CSV s'épareré par des virgule.
      */
+
+
     private void initData(String file){
         String line = "";
         String[] data = null;
@@ -94,6 +128,7 @@ public class Data implements IData {
             System.err.println(exception);
         }
     }
+
 
     /**
      * selectionne l'année que l'on veux afficher

@@ -8,5 +8,8 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" exported="" name="openjfx-14.0.1_windows-x64_bin-sdk" level="application" />
+    <orderEntry type="library" name="junit5-r5.6" level="project" />
+    <orderEntry type="library" exported="" name="JUnit4" level="project" />
+    <orderEntry type="library" exported="" name="jimObjModelImporterJFX" level="project" />
   </component>
 </module>
