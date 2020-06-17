@@ -35,8 +35,11 @@ public class Data implements IData {
         initData(file);
     }
 
+
     public void setEarth(Earth earth) {
         this.earth = earth;
+        earth.setStep((max-min)/6);//taille de chaque intervale de valeur pour la légende
+        earth.initialisePosition(mapTemperature.get(selectAnnee));
     }
 
     public void setLabel(Label label) {
@@ -51,12 +54,6 @@ public class Data implements IData {
         this.slider = slider;
     }
 
-    public void setSelectAnnee(String Annee) {
-        this.selectAnnee = Annee;
-        slider.adjustValue(Double.parseDouble(Annee));
-        textField.setText(Annee);
-        label.setText(Annee);
-    }
 
     /**
      * charge les donnés depuis un fichier
@@ -136,8 +133,12 @@ public class Data implements IData {
      * @return les différentes anomalie et leur position
      */
     @Override
-    public ArrayList selectAnnee(String annee) {
+    public ArrayList<Temperature> setAnnee(String annee) {
         selectAnnee = annee;
+        slider.adjustValue(Double.parseDouble(annee));
+        textField.setText(annee);
+        label.setText(annee);
+        earth.afficheAnnee(mapTemperature.get(annee));
         return mapTemperature.get(annee);
     }
 

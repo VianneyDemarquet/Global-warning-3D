@@ -30,7 +30,7 @@
                     </rowConstraints>
                      <children>
                         <TextField fx:id="texteAnnee" text="2020" GridPane.columnIndex="1" />
-                        <RadioButton mnemonicParsing="false" text="quadrilatère">
+                        <RadioButton mnemonicParsing="false" selected="true" text="quadrilatère">
                            <toggleGroup>
                               <ToggleGroup fx:id="mode" />
                            </toggleGroup>
@@ -54,16 +54,12 @@
                         <Font size="18.0" />
                      </font>
                   </Label>
-                  <Pane prefHeight="30.0" prefWidth="200.0" style="-fx-background-color: #ff2e2e;" />
-                  <Pane layoutX="10.0" layoutY="87.0" prefHeight="30.0" prefWidth="200.0" style="-fx-background-color: #ff3b3b;" />
-                  <Pane layoutX="10.0" layoutY="137.0" prefHeight="30.0" prefWidth="200.0" style="-fx-background-color: #ff4747;" />
-                  <Pane layoutX="10.0" layoutY="187.0" prefHeight="30.0" prefWidth="200.0" style="-fx-background-color: #ff5454;" />
-                  <Pane layoutX="10.0" layoutY="237.0" prefHeight="30.0" prefWidth="200.0" style="-fx-background-color: #ff6161;" />
-                  <Pane layoutX="10.0" layoutY="287.0" prefHeight="30.0" prefWidth="200.0" style="-fx-background-color: #adadff;" />
-                  <Pane layoutX="10.0" layoutY="337.0" prefHeight="30.0" prefWidth="200.0" style="-fx-background-color: #9494ff;" />
-                  <Pane layoutX="10.0" layoutY="387.0" prefHeight="30.0" prefWidth="200.0" style="-fx-background-color: #7a7aff;" />
-                  <Pane layoutX="10.0" layoutY="437.0" prefHeight="30.0" prefWidth="200.0" style="-fx-background-color: #6161ff;" />
-                  <Pane layoutX="10.0" layoutY="487.0" prefHeight="30.0" prefWidth="200.0" style="-fx-background-color: #4747ff;" />
+                  <Pane prefHeight="30.0" prefWidth="200.0" style="-fx-background-color: #ff0000;" />
+                  <Pane layoutX="10.0" layoutY="87.0" prefHeight="30.0" prefWidth="200.0" style="-fx-background-color: #ff2a2a;" />
+                  <Pane layoutX="10.0" layoutY="137.0" prefHeight="30.0" prefWidth="200.0" style="-fx-background-color: #ff3b3b;" />
+                  <Pane layoutX="10.0" layoutY="387.0" prefHeight="30.0" prefWidth="200.0" style="-fx-background-color: #3b3bff;" />
+                  <Pane layoutX="10.0" layoutY="437.0" prefHeight="30.0" prefWidth="200.0" style="-fx-background-color: #2a2aff;" />
+                  <Pane layoutX="10.0" layoutY="487.0" prefHeight="30.0" prefWidth="200.0" style="-fx-background-color: #0000ff;" />
                   <GridPane>
                     <columnConstraints>
                       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />

@@ -45,15 +45,15 @@ public class Controller implements Initializable{
     @Override
     public void initialize(URL location, ResourceBundle resources){
         data = new Data("src/sample/data/data.csv");
-        data.setEarth(new Earth(pane3D));
         data.setLabel(labelAnnee);
         data.setSlider(sliderAnnee);
         data.setTextField(texteAnnee);
+        data.setEarth(new Earth(pane3D));
 
         sliderAnnee.valueProperty().addListener(new javafx.beans.value.ChangeListener<Number>() {
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-                data.setSelectAnnee(newValue.intValue()+"");
+                data.setAnnee(newValue.intValue()+"");
             }
         });
 
@@ -61,7 +61,7 @@ public class Controller implements Initializable{
             @Override
             public void handle(KeyEvent e) {
                 if (e.getCode().equals(KeyCode.ENTER)) {
-                    data.setSelectAnnee(texteAnnee.getText());
+                    data.setAnnee(texteAnnee.getText());
                 }
             }
         });

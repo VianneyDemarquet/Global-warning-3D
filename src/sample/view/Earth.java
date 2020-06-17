@@ -4,6 +4,7 @@ import javafx.geometry.Point3D;
 import javafx.scene.*;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Material;
 import javafx.scene.paint.PhongMaterial;
 import javafx.scene.shape.Cylinder;
 import javafx.scene.shape.MeshView;
@@ -13,14 +14,28 @@ import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 import com.interactivemesh.jfx.importer.ImportException;
 import com.interactivemesh.jfx.importer.obj.ObjModelImporter;
+import sample.data.Position;
+import sample.data.Temperature;
 import sample.view.CameraManager;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Iterator;
 
 public class Earth {
 
     private static final float TEXTURE_LAT_OFFSET = -0.2f;
     private static final float TEXTURE_LON_OFFSET = 2.8f;
+    private float step;
+    private Group earth;
+    private Color color0;
+    private Color color1;
+    private Color color2;
+    private Color color3;
+    private Color color4;
+    private Color color5;
+    private Color color6;
+    private ArrayList<MeshView> carre;
 
     public Earth(Pane pane3D){
         //Create a Pane et graph scene root for the 3D content
@@ -35,24 +50,18 @@ public class Earth {
             System.out.println(e.getMessage());
         }
         MeshView[] meshViews = objImporter.getImport();
-        Group earth = new Group(meshViews);
+        earth = new Group(meshViews);
         //Group earth = new Group();
         root3D.getChildren().addAll(earth);
 
 
-        SubScene subscene = new SubScene(root3D, 600, 500, true, SceneAntialiasing.BALANCED);
+        SubScene subscene = new SubScene(root3D, 600, 600, true, SceneAntialiasing.BALANCED);
 
         // Add a camera group
         PerspectiveCamera camera = new PerspectiveCamera(true);
         new CameraManager(camera, pane3D, root3D);
 
         // Add point light
-        PointLight light = new PointLight(Color.WHITE);
-        light.setTranslateX(-180);
-        light.setTranslateY(-90);
-        light.setTranslateZ(-120);
-        light.getScope().addAll(root3D);
-        root3D.getChildren().add(light);
 
         // Add ambient light
         AmbientLight ambientLight = new AmbientLight(Color.WHITE);
@@ -64,6 +73,14 @@ public class Earth {
         subscene.setCamera(camera);
         subscene.setFill(Color.GRAY);
         pane3D.getChildren().addAll(subscene);
+
+        color0 = Color.web("#000000",0.);
+        color1 = Color.web("#ff0000",0.3);
+        color2 = Color.web("#ff2a2a",0.3);
+        color3 = Color.web("#ff3b3b",0.3);
+        color4 = Color.web("#3b3bff",0.3);
+        color5 = Color.web("#2a2aff",0.3);
+        color6 = Color.web("#0000ff",0.3);
 
     }
 
@@ -120,24 +137,45 @@ public class Earth {
         sphere.setTranslateY(pos.getY());
         sphere.setTranslateZ(pos.getZ());
         parent.getChildren().addAll(sphere);
-        setQuadrilater(parent, latitude, longitude);
+
     }
 
-    private void setQuadrilater(Group parent, float latitude, float longitude){
-        Point3D topLeft = geoCoordTo3dCoord(latitude-10, longitude-10,1.05f);
-        Point3D topRight = geoCoordTo3dCoord(latitude+10, longitude-10, 1.05f);
-        Point3D botomLeft = geoCoordTo3dCoord(latitude-10, longitude+10, 1.05f);
-        Point3D botomRight = geoCoordTo3dCoord(latitude+10, longitude+10, 1.05f);
+    private void setQuadrilater(Temperature temp, float radius){
+        Point3D topLeft = geoCoordTo3dCoord(temp.getLatitude()-2, temp.getLongitude()-2,1.05f);
+        Point3D topRight = geoCoordTo3dCoord(temp.getLatitude()+2, temp.getLongitude()-2, 1.05f);
+        Point3D botomLeft = geoCoordTo3dCoord(temp.getLatitude()-2, temp.getLongitude()+2, 1.05f);
+        Point3D botomRight = geoCoordTo3dCoord(temp.getLatitude()+2, temp.getLongitude()+2, 1.05f);
 
         final PhongMaterial material = new PhongMaterial();
-        Color red = new Color(0.3, 0, 0, 0.3);
-        material.setDiffuseColor(red);
-        material.setSpecularColor(red);
 
-        addQuadrilateral(parent, topRight, botomRight, topLeft, botomLeft, material);
+        Color couleur = choixCouleur(temp);
+        material.setDiffuseColor(couleur);
+        material.setSpecularColor(couleur);
+
+        addQuadrilateral(topRight, botomRight, topLeft, botomLeft, material);
     }
 
-    private void addQuadrilateral(Group parent, Point3D botomRight, Point3D topRight, Point3D bottomLeft, Point3D topLeft, PhongMaterial material){
+    private Color choixCouleur(Temperature temperature){
+        if(temperature == null){
+            return color0;
+        }
+        float t = temperature.getTemperature();
+        if(t > step*2){
+            return color1;
+        }else if(t > step){
+            return color2;
+        }else if(t > 0){
+            return color3;
+        }else if(t > -step){
+            return color4;
+        }else if(t > -step*2){
+            return color5;
+        }else{
+            return color6;
+        }
+    }
+
+    private void addQuadrilateral(Point3D botomRight, Point3D topRight, Point3D bottomLeft, Point3D topLeft, PhongMaterial material){
         final TriangleMesh triangleMesh = new TriangleMesh();
 
         final float[] points = {
@@ -166,6 +204,38 @@ public class Earth {
 
         final MeshView meshView = new MeshView(triangleMesh);
         meshView.setMaterial(material);
-        parent.getChildren().addAll(meshView);
+        carre.add(meshView);
+        earth.getChildren().addAll(meshView);
+    }
+
+    /**
+     * affiche les température correspondante pour l'année selectionné
+     * @param list liste des température
+     */
+    public void afficheAnnee(ArrayList<Temperature> list){
+        Iterator<Temperature> t = list.iterator();
+        Iterator<MeshView> m = carre.iterator();
+        while (t.hasNext() && m.hasNext()){
+            Color c = choixCouleur(t.next());
+            PhongMaterial material = (PhongMaterial) m.next().getMaterial();
+            material.setDiffuseColor(c);
+            material.setSpecularColor(c);
+        }
+    }
+
+    /**
+     * créé les différent zone avec leur couleur associé pour l'année courante
+     * @param temperatures les température et les positions de l'année courante
+     */
+    public void initialisePosition(ArrayList<Temperature> temperatures){
+        carre = new ArrayList<MeshView>();
+        Iterator<Temperature> i = temperatures.iterator();
+        while (i.hasNext()){
+            setQuadrilater(i.next(),1.f);
+        }
+    }
+
+    public void setStep(float step) {
+        this.step = step;
     }
 }
