@@ -30,7 +30,7 @@
                     </rowConstraints>
                      <children>
                         <TextField fx:id="texteAnnee" text="2020" GridPane.columnIndex="1" />
-                        <RadioButton mnemonicParsing="false" selected="true" text="quadrilatère">
+                        <RadioButton mnemonicParsing="false" selected="true" text="Quadrilatère">
                            <toggleGroup>
                               <ToggleGroup fx:id="mode" />
                            </toggleGroup>
@@ -54,12 +54,53 @@
                         <Font size="18.0" />
                      </font>
                   </Label>
-                  <Pane prefHeight="30.0" prefWidth="200.0" style="-fx-background-color: #ff0000;" />
-                  <Pane layoutX="10.0" layoutY="87.0" prefHeight="30.0" prefWidth="200.0" style="-fx-background-color: #ff2a2a;" />
-                  <Pane layoutX="10.0" layoutY="137.0" prefHeight="30.0" prefWidth="200.0" style="-fx-background-color: #ff3b3b;" />
-                  <Pane layoutX="10.0" layoutY="387.0" prefHeight="30.0" prefWidth="200.0" style="-fx-background-color: #3b3bff;" />
-                  <Pane layoutX="10.0" layoutY="437.0" prefHeight="30.0" prefWidth="200.0" style="-fx-background-color: #2a2aff;" />
-                  <Pane layoutX="10.0" layoutY="487.0" prefHeight="30.0" prefWidth="200.0" style="-fx-background-color: #0000ff;" />
+                  <Pane prefHeight="30.0" prefWidth="200.0" style="-fx-background-color: #ff0000;">
+                     <children>
+                        <Label fx:id="legende1" layoutX="10.0" layoutY="5.0" text="Label" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font></Label>
+                     </children></Pane>
+                  <Pane layoutX="10.0" layoutY="87.0" prefHeight="30.0" prefWidth="200.0" style="-fx-background-color: #ff2a2a;">
+                     <children>
+                        <Label fx:id="legende2" layoutX="10.0" layoutY="5.0" text="Label" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                     </children></Pane>
+                  <Pane layoutX="10.0" layoutY="137.0" prefHeight="30.0" prefWidth="200.0" style="-fx-background-color: #ff3b3b;">
+                     <children>
+                        <Label fx:id="legende3" layoutX="10.0" layoutY="5.0" text="Label" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                     </children></Pane>
+                  <Pane layoutX="10.0" layoutY="387.0" prefHeight="30.0" prefWidth="200.0" style="-fx-background-color: #3b3bff;">
+                     <children>
+                        <Label fx:id="legende4" layoutX="10.0" layoutY="5.0" text="Label" textFill="#fffbfb">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                     </children></Pane>
+                  <Pane layoutX="10.0" layoutY="437.0" prefHeight="30.0" prefWidth="200.0" style="-fx-background-color: #2a2aff;">
+                     <children>
+                        <Label fx:id="legende5" layoutX="10.0" layoutY="5.0" text="Label" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                     </children></Pane>
+                  <Pane layoutX="10.0" layoutY="487.0" prefHeight="30.0" prefWidth="200.0" style="-fx-background-color: #0000ff;">
+                     <children>
+                        <Label fx:id="legende6" layoutX="10.0" layoutY="5.0" text="Label" textFill="WHITE">
+                           <font>
+                              <Font size="14.0" />
+                           </font>
+                        </Label>
+                     </children></Pane>
                   <GridPane>
                     <columnConstraints>
                       <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -86,14 +127,7 @@
                     </rowConstraints>
                      <children>
                         <Button fx:id="annimation" mnemonicParsing="false" text="Play/Pause" />
-                        <SplitMenuButton fx:id="vitesse" mnemonicParsing="false" text="vitesse" GridPane.columnIndex="1">
-                          <items>
-                            <MenuItem mnemonicParsing="false" text="x0.5" />
-                            <MenuItem mnemonicParsing="false" text="x1" />
-                            <MenuItem mnemonicParsing="false" text="x2" />
-                            <MenuItem mnemonicParsing="false" text="x4" />
-                          </items>
-                        </SplitMenuButton>
+                        <ComboBox fx:id="vitesse" prefWidth="150.0" promptText="vitesse" GridPane.columnIndex="1"/>
                      </children>
                   </GridPane>
                   <Pane fx:id="graphique" prefHeight="200.0" prefWidth="200.0" />

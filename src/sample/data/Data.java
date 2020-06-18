@@ -26,6 +26,7 @@ public class Data implements IData {
     private Label label;
     private Slider slider;
     private TextField textField;
+    private String typeAffichage = "Quadrilatère";
 
     public Data(String file){
         mapTemperature = new HashMap<>();
@@ -138,7 +139,11 @@ public class Data implements IData {
         slider.adjustValue(Double.parseDouble(annee));
         textField.setText(annee);
         label.setText(annee);
-        earth.afficheAnnee(mapTemperature.get(annee));
+        if (typeAffichage.equals("Histogramme")){
+            earth.afficheAnneeHistograme(mapTemperature.get(annee));
+        }else{
+            earth.afficheAnneeQuadrilataire(mapTemperature.get(annee));
+        }
         return mapTemperature.get(annee);
     }
 
@@ -194,5 +199,25 @@ public class Data implements IData {
 
     public HashMap<String, ArrayList<Temperature>> getMapTemperature() {
         return mapTemperature;
+    }
+
+    public void changeMode(String mode){
+        typeAffichage = mode;
+        if (mode.equals("Histogramme")){
+            earth.toHistograme();
+            earth.afficheAnneeHistograme(mapTemperature.get(selectAnnee));
+        }else{
+            earth.toQuadrilatere();
+            earth.afficheAnneeQuadrilataire(mapTemperature.get(selectAnnee));
+        }
+    }
+
+    public void nextYear(){
+        int current = Integer.parseInt(selectAnnee);
+        if (current < 2020 && current >= Integer.parseInt(firstYear)){
+            setAnnee(current+1+"");
+        }else {
+            setAnnee(firstYear);
+        }
     }
 }

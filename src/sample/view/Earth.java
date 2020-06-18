@@ -6,10 +6,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.paint.Material;
 import javafx.scene.paint.PhongMaterial;
-import javafx.scene.shape.Cylinder;
-import javafx.scene.shape.MeshView;
-import javafx.scene.shape.Sphere;
-import javafx.scene.shape.TriangleMesh;
+import javafx.scene.shape.*;
 import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 import com.interactivemesh.jfx.importer.ImportException;
@@ -26,6 +23,8 @@ public class Earth {
 
     private static final float TEXTURE_LAT_OFFSET = -0.2f;
     private static final float TEXTURE_LON_OFFSET = 2.8f;
+    private static final float RADIUS = 1.05f;
+    private static final double MIN_SIZE = 0.01;
     private float step;
     private Group earth;
     private Color color0;
@@ -36,6 +35,9 @@ public class Earth {
     private Color color5;
     private Color color6;
     private ArrayList<MeshView> carre;
+    private ArrayList<Cylinder> histogramme;
+    private Point3D centre = new Point3D(0,0,0);
+
 
     public Earth(Pane pane3D){
         //Create a Pane et graph scene root for the 3D content
@@ -84,27 +86,6 @@ public class Earth {
 
     }
 
-
-    // From Rahel Lüthy : https://netzwerg.ch/blog/2015/03/22/javafx-3d-line/
-    public Cylinder createLine(Point3D origin, Point3D target) {
-        Point3D yAxis = new Point3D(0, 1, 0);
-        Point3D diff = target.subtract(origin);
-        double height = diff.magnitude();
-
-        Point3D mid = target.midpoint(origin);
-        Translate moveToMidpoint = new Translate(mid.getX(), mid.getY(), mid.getZ());
-
-        Point3D axisOfRotation = diff.crossProduct(yAxis);
-        double angle = Math.acos(diff.normalize().dotProduct(yAxis));
-        Rotate rotateAroundCenter = new Rotate(-Math.toDegrees(angle), axisOfRotation);
-
-        Cylinder line = new Cylinder(0.01f, height);
-
-        line.getTransforms().addAll(moveToMidpoint, rotateAroundCenter);
-
-        return line;
-    }
-
     public static Point3D geoCoordTo3dCoord(float lat, float lon) {
         float lat_cor = lat + TEXTURE_LAT_OFFSET;
         float lon_cor = lon + TEXTURE_LON_OFFSET;
@@ -140,11 +121,15 @@ public class Earth {
 
     }
 
-    private void setQuadrilater(Temperature temp, float radius){
-        Point3D topLeft = geoCoordTo3dCoord(temp.getLatitude()-2, temp.getLongitude()-2,1.05f);
-        Point3D topRight = geoCoordTo3dCoord(temp.getLatitude()+2, temp.getLongitude()-2, 1.05f);
-        Point3D botomLeft = geoCoordTo3dCoord(temp.getLatitude()-2, temp.getLongitude()+2, 1.05f);
-        Point3D botomRight = geoCoordTo3dCoord(temp.getLatitude()+2, temp.getLongitude()+2, 1.05f);
+    /**
+     * crée un caré de couleur de 4/4 ° pour la position souhaité et de la couleur souhaité
+     * @param temp la variation de température et la position
+     */
+    private void setQuadrilater(Temperature temp){
+        Point3D topLeft = geoCoordTo3dCoord(temp.getLatitude()-2, temp.getLongitude()-2,RADIUS);
+        Point3D topRight = geoCoordTo3dCoord(temp.getLatitude()+2, temp.getLongitude()-2, RADIUS);
+        Point3D botomLeft = geoCoordTo3dCoord(temp.getLatitude()-2, temp.getLongitude()+2, RADIUS);
+        Point3D botomRight = geoCoordTo3dCoord(temp.getLatitude()+2, temp.getLongitude()+2, RADIUS);
 
         final PhongMaterial material = new PhongMaterial();
 
@@ -160,7 +145,9 @@ public class Earth {
             return color0;
         }
         float t = temperature.getTemperature();
-        if(t > step*2){
+        if (t == Float.NaN){
+            return color0;
+        }else if(t > step*2){
             return color1;
         }else if(t > step){
             return color2;
@@ -208,18 +195,118 @@ public class Earth {
         earth.getChildren().addAll(meshView);
     }
 
+    // From Rahel Lüthy : https://netzwerg.ch/blog/2015/03/22/javafx-3d-line/
+    public Cylinder createLine(Point3D centre, Point3D target, float temperature) {
+        Point3D yAxis = new Point3D(0, 1, 0);
+        Point3D diff = target.subtract(centre);
+
+        Point3D mid = target.midpoint(centre);
+        Translate moveToMidpoint = new Translate(mid.getX(), mid.getY(), mid.getZ());
+
+        Point3D axisOfRotation = diff.crossProduct(yAxis);
+        double angle = Math.acos(diff.normalize().dotProduct(yAxis));
+        Rotate rotateAroundCenter = new Rotate(-Math.toDegrees(angle), axisOfRotation);
+
+        Cylinder line = new Cylinder(0.01f, temperature);
+
+        line.getTransforms().addAll(moveToMidpoint, rotateAroundCenter);
+        earth.getChildren().add(line);
+        return line;
+    }
+
     /**
-     * affiche les température correspondante pour l'année selectionné
+     * crée et affiche une barre d'un hystogramme représentant une température et a une position
+     * @param temp
+     */
+    public void addHistogramme(Temperature temp){
+        Point3D pos = geoCoordTo3dCoord(temp.getLatitude(),temp.getLongitude(), 1.1f);
+        Cylinder barre;
+        if (temp.getTemperature() > MIN_SIZE) {
+            barre = new Cylinder(0.01, temp.getTemperature()*0.1);
+        }else{
+            barre = new Cylinder(0.01,MIN_SIZE);
+        }
+        final PhongMaterial material = new PhongMaterial();
+        Color couleur = choixCouleur(temp);
+        material.setDiffuseColor(couleur);
+        material.setSpecularColor(couleur);
+
+        barre.setTranslateX(pos.getX());
+        barre.setTranslateY(pos.getY());
+        barre.setTranslateZ(pos.getZ());
+
+        barre.setMaterial(material);
+
+        Point3D yAxis = new Point3D(0, 1, 0);
+        Point3D diff = pos.subtract(centre);
+
+        Point3D axisOfRotation = diff.crossProduct(yAxis);
+        double angle = Math.acos(diff.normalize().dotProduct(yAxis));
+        Rotate rotateAroundCenter = new Rotate(-Math.toDegrees(angle), axisOfRotation);
+
+        barre.getTransforms().addAll(rotateAroundCenter);
+        histogramme.add(barre);
+    }
+
+    /**
+     * affiche les température correspondante sous forme de quadrilataire pour l'année selectionné
      * @param list liste des température
      */
-    public void afficheAnnee(ArrayList<Temperature> list){
-        Iterator<Temperature> t = list.iterator();
+    public void afficheAnneeQuadrilataire(ArrayList<Temperature> list){
         Iterator<MeshView> m = carre.iterator();
-        while (t.hasNext() && m.hasNext()){
-            Color c = choixCouleur(t.next());
-            PhongMaterial material = (PhongMaterial) m.next().getMaterial();
-            material.setDiffuseColor(c);
-            material.setSpecularColor(c);
+        if (list == null){
+            while (m.hasNext()){
+                PhongMaterial material = (PhongMaterial) m.next().getMaterial();
+                material.setDiffuseColor(color0);
+                material.setSpecularColor(color0);
+            }
+        }else {
+            Iterator<Temperature> t;
+            t = list.iterator();
+            while (m.hasNext() && t.hasNext()){
+                Color c;
+                if (t.hasNext()) {
+                    c = choixCouleur(t.next());
+                }else{
+                    c = choixCouleur(null);
+                }
+                PhongMaterial material = (PhongMaterial) m.next().getMaterial();
+                material.setDiffuseColor(c);
+                material.setSpecularColor(c);
+            }
+        }
+    }
+
+    /**
+     * affiche les température correspondante sous forme de quadrilataire pour l'année selectionné
+     * @param list liste des température
+     */
+    public void afficheAnneeHistograme(ArrayList<Temperature> list){
+        Iterator<Cylinder> h = histogramme.iterator();
+        if (list == null){
+            while (h.hasNext()){
+                PhongMaterial material = (PhongMaterial) h.next().getMaterial();
+                material.setDiffuseColor(color0);
+                material.setSpecularColor(color0);
+
+            }
+        }else {
+            Iterator<Temperature> t;
+            t = list.iterator();
+            while (h.hasNext() && t.hasNext()){
+                Color c;
+                Cylinder b = h.next();
+                Temperature temp = t.next();
+                if (t.hasNext()) {
+                    c = choixCouleur(temp);
+                }else{
+                    c = choixCouleur(null);
+                }
+                PhongMaterial material = (PhongMaterial) b.getMaterial();
+                material.setDiffuseColor(c);
+                material.setSpecularColor(c);
+                b.setHeight(temp.getTemperature()*0.1);
+            }
         }
     }
 
@@ -229,10 +316,22 @@ public class Earth {
      */
     public void initialisePosition(ArrayList<Temperature> temperatures){
         carre = new ArrayList<MeshView>();
+        histogramme = new ArrayList<Cylinder>();
         Iterator<Temperature> i = temperatures.iterator();
         while (i.hasNext()){
-            setQuadrilater(i.next(),1.f);
+            Temperature t = i.next();
+            setQuadrilater(t);
+            addHistogramme(t);
         }
+    }
+    public void toHistograme(){
+        earth.getChildren().removeAll(carre);
+        earth.getChildren().addAll(histogramme);
+    }
+
+    public void toQuadrilatere(){
+        earth.getChildren().removeAll(histogramme);
+        earth.getChildren().addAll(carre);
     }
 
     public void setStep(float step) {
