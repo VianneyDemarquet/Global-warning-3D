@@ -1,5 +1,7 @@
 package sample.data;
 
+import javafx.scene.chart.LineChart;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextField;
@@ -12,6 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 
 public class Data implements IData {
     private HashMap<String, ArrayList<Temperature>> mapTemperature;
@@ -27,6 +30,8 @@ public class Data implements IData {
     private Slider slider;
     private TextField textField;
     private String typeAffichage = "Quadrilatère";
+    private LineChart graph;
+    private XYChart.Series donneGraph;
 
     public Data(String file){
         mapTemperature = new HashMap<>();
@@ -55,13 +60,14 @@ public class Data implements IData {
         this.slider = slider;
     }
 
+    public void setGraph(LineChart graph) {
+        this.graph = graph;
+    }
 
     /**
      * charge les donnés depuis un fichier
      * @param file le fichier à charger au format CSV s'épareré par des virgule.
      */
-
-
     private void initData(String file){
         String line = "";
         String[] data = null;
@@ -219,5 +225,25 @@ public class Data implements IData {
         }else {
             setAnnee(firstYear);
         }
+    }
+
+    /**
+     * change les données du graphique
+     * @param latitude la longitude pour laquelle on veut les donnée
+     * @param longitude la latitude pour laquelle on veut les donnée
+     */
+    public void modifGraph(float latitude, float longitude){
+        Iterator<Temperature> i = selectPosition(latitude, longitude).iterator();
+        int annee = Integer.parseInt(firstYear);
+        if (donneGraph != null){
+            graph.getData().removeAll(donneGraph);
+        }
+        donneGraph = new XYChart.Series();
+        donneGraph.setName("Variation de température à la position "+latitude+"° "+longitude+"°");
+        while (i.hasNext()){
+            donneGraph.getData().add(new XYChart.Data(annee+"", i.next().getTemperature()));
+            annee++;
+        }
+        graph.getData().add(donneGraph);
     }
 }

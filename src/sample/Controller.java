@@ -10,6 +10,7 @@ import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Point3D;
+import javafx.scene.chart.LineChart;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
@@ -35,10 +36,10 @@ public class Controller implements Initializable{
     private Slider sliderAnnee;
 
     @FXML
-    private TextField latitude;
+    private TextField textlatitude;
 
     @FXML
-    private TextField longitude;
+    private TextField textlongitude;
 
     @FXML
     private Button annimation;
@@ -67,6 +68,9 @@ public class Controller implements Initializable{
     @FXML
     private ToggleGroup mode;
 
+    @FXML
+    private LineChart graph;
+
     private  Data data;
     private float vitesseAnimation;
 
@@ -76,7 +80,8 @@ public class Controller implements Initializable{
         data.setLabel(labelAnnee);
         data.setSlider(sliderAnnee);
         data.setTextField(texteAnnee);
-        data.setEarth(new Earth(pane3D));
+        data.setEarth(new Earth(pane3D, this));
+        data.setGraph(graph);
 
         sliderAnnee.valueProperty().addListener(new javafx.beans.value.ChangeListener<Number>() {
             @Override
@@ -148,6 +153,24 @@ public class Controller implements Initializable{
         });
 
 
+        textlatitude.setOnKeyReleased(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent e) {
+                if (e.getCode().equals(KeyCode.ENTER)) {
+                    data.modifGraph(Float.parseFloat(textlatitude.getText()), Float.parseFloat(textlongitude.getText()));
+                }
+            }
+        });
+
+        textlongitude.setOnKeyReleased(new EventHandler<KeyEvent>() {
+            @Override
+            public void handle(KeyEvent e) {
+                if (e.getCode().equals(KeyCode.ENTER)) {
+                    data.modifGraph(Float.parseFloat(textlatitude.getText()), Float.parseFloat(textlongitude.getText()));
+                }
+            }
+        });
+
         float min = data.getMin();
         float max = data.getMax();
         float step = (max - min)/6;
@@ -157,5 +180,11 @@ public class Controller implements Initializable{
         legende4.setText("0 ; "+-step);
         legende5.setText(-step+" ; "+-step*2);
         legende6.setText(-step*2+" ; "+min);
+    }
+
+    public void setPosition(float latitude, float longitude){
+        textlatitude.setText(latitude+"");
+        textlongitude.setText(longitude+"");
+        data.modifGraph(latitude,longitude);
     }
 }

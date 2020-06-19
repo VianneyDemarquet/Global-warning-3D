@@ -11,11 +11,13 @@ import javafx.scene.transform.Rotate;
 import javafx.scene.transform.Translate;
 import com.interactivemesh.jfx.importer.ImportException;
 import com.interactivemesh.jfx.importer.obj.ObjModelImporter;
+import sample.Controller;
 import sample.data.Position;
 import sample.data.Temperature;
 import sample.view.CameraManager;
 
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -37,9 +39,11 @@ public class Earth {
     private ArrayList<MeshView> carre;
     private ArrayList<Cylinder> histogramme;
     private Point3D centre = new Point3D(0,0,0);
+    private Controller controller;
 
 
-    public Earth(Pane pane3D){
+    public Earth(Pane pane3D, Controller c){
+        controller = c;
         //Create a Pane et graph scene root for the 3D content
         Group root3D = new Group();
 
@@ -108,38 +112,11 @@ public class Earth {
                         * java.lang.Math.cos(java.lang.Math.toRadians(lat_cor))*radius);
     }
 
-    public void displayTown(Group parent, String name, float latitude, float longitude){
-        Sphere sphere = new Sphere(0.01);
-        Group ville = new Group();
-        ville.getChildren().add(sphere);
-        ville.setId(name);
-        Point3D pos = geoCoordTo3dCoord(latitude, longitude);
-        sphere.setTranslateX(pos.getX());
-        sphere.setTranslateY(pos.getY());
-        sphere.setTranslateZ(pos.getZ());
-        parent.getChildren().addAll(sphere);
-
-    }
-
     /**
-     * crée un caré de couleur de 4/4 ° pour la position souhaité et de la couleur souhaité
-     * @param temp la variation de température et la position
+     * donne la couleur correspondant à une anomalie de température
+     * @param temperature l'annomalie de température
+     * @return la couleur corespondante
      */
-    private void setQuadrilater(Temperature temp){
-        Point3D topLeft = geoCoordTo3dCoord(temp.getLatitude()-2, temp.getLongitude()-2,RADIUS);
-        Point3D topRight = geoCoordTo3dCoord(temp.getLatitude()+2, temp.getLongitude()-2, RADIUS);
-        Point3D botomLeft = geoCoordTo3dCoord(temp.getLatitude()-2, temp.getLongitude()+2, RADIUS);
-        Point3D botomRight = geoCoordTo3dCoord(temp.getLatitude()+2, temp.getLongitude()+2, RADIUS);
-
-        final PhongMaterial material = new PhongMaterial();
-
-        Color couleur = choixCouleur(temp);
-        material.setDiffuseColor(couleur);
-        material.setSpecularColor(couleur);
-
-        addQuadrilateral(topRight, botomRight, topLeft, botomLeft, material);
-    }
-
     private Color choixCouleur(Temperature temperature){
         if(temperature == null){
             return color0;
@@ -162,7 +139,35 @@ public class Earth {
         }
     }
 
-    private void addQuadrilateral(Point3D botomRight, Point3D topRight, Point3D bottomLeft, Point3D topLeft, PhongMaterial material){
+    public void displayTown(Group parent, String name, float latitude, float longitude){
+        Sphere sphere = new Sphere(0.01);
+        Group ville = new Group();
+        ville.getChildren().add(sphere);
+        ville.setId(name);
+        Point3D pos = geoCoordTo3dCoord(latitude, longitude);
+        sphere.setTranslateX(pos.getX());
+        sphere.setTranslateY(pos.getY());
+        sphere.setTranslateZ(pos.getZ());
+        parent.getChildren().addAll(sphere);
+
+    }
+
+    /**
+     * crée un caré de couleur de 4/4 ° pour la position souhaité et de la couleur souhaité
+     * @param temp la variation de température et la position
+     */
+    private void setQuadrilater(Temperature temp){
+        Point3D bottomLeft = geoCoordTo3dCoord(temp.getLatitude()-2, temp.getLongitude()-2,RADIUS);
+        Point3D botomRight = geoCoordTo3dCoord(temp.getLatitude()+2, temp.getLongitude()-2, RADIUS);
+        Point3D topLeft = geoCoordTo3dCoord(temp.getLatitude()-2, temp.getLongitude()+2, RADIUS);
+        Point3D topRight = geoCoordTo3dCoord(temp.getLatitude()+2, temp.getLongitude()+2, RADIUS);
+
+        final PhongMaterial material = new PhongMaterial();
+
+        Color couleur = choixCouleur(temp);
+        material.setDiffuseColor(couleur);
+        material.setSpecularColor(couleur);
+
         final TriangleMesh triangleMesh = new TriangleMesh();
 
         final float[] points = {
@@ -193,6 +198,10 @@ public class Earth {
         meshView.setMaterial(material);
         carre.add(meshView);
         earth.getChildren().addAll(meshView);
+
+        meshView.setOnMouseClicked(mouseEvent -> {
+            controller.setPosition(temp.getLatitude(),temp.getLongitude());
+        });
     }
 
     // From Rahel Lüthy : https://netzwerg.ch/blog/2015/03/22/javafx-3d-line/
@@ -222,7 +231,7 @@ public class Earth {
         Point3D pos = geoCoordTo3dCoord(temp.getLatitude(),temp.getLongitude(), 1.1f);
         Cylinder barre;
         if (temp.getTemperature() > MIN_SIZE) {
-            barre = new Cylinder(0.01, temp.getTemperature()*0.1);
+            barre = new Cylinder(0.01, 0.0);
         }else{
             barre = new Cylinder(0.01,MIN_SIZE);
         }
@@ -246,6 +255,10 @@ public class Earth {
 
         barre.getTransforms().addAll(rotateAroundCenter);
         histogramme.add(barre);
+
+        barre.setOnMouseClicked(mouseEvent -> {
+            controller.setPosition(temp.getLatitude(),temp.getLongitude());
+        });
     }
 
     /**
@@ -305,7 +318,7 @@ public class Earth {
                 PhongMaterial material = (PhongMaterial) b.getMaterial();
                 material.setDiffuseColor(c);
                 material.setSpecularColor(c);
-                b.setHeight(temp.getTemperature()*0.1);
+                b.setHeight(Math.round((temp.getTemperature()*100))/1000.f);//arondi la vlaeur de temperature à 0.01 pour plus de rapidité puis change la valeur de l'histograme
             }
         }
     }
