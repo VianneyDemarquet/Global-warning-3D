@@ -25,7 +25,7 @@ public class Earth {
 
     private static final float TEXTURE_LAT_OFFSET = -0.2f;
     private static final float TEXTURE_LON_OFFSET = 2.8f;
-    private static final float RADIUS = 1.05f;
+    private static final float RADIUS = 1.1f;
     private static final double MIN_SIZE = 0.01;
     private float step;
     private Group earth;
@@ -228,7 +228,7 @@ public class Earth {
      * @param temp
      */
     public void addHistogramme(Temperature temp){
-        Point3D pos = geoCoordTo3dCoord(temp.getLatitude(),temp.getLongitude(), 1.1f);
+        Point3D pos = geoCoordTo3dCoord(temp.getLatitude(),temp.getLongitude(), RADIUS);
         Cylinder barre;
         if (temp.getTemperature() > MIN_SIZE) {
             barre = new Cylinder(0.01, 0.0);
@@ -318,7 +318,11 @@ public class Earth {
                 PhongMaterial material = (PhongMaterial) b.getMaterial();
                 material.setDiffuseColor(c);
                 material.setSpecularColor(c);
-                b.setHeight(Math.round((temp.getTemperature()*100))/1000.f);//arondi la vlaeur de temperature à 0.01 pour plus de rapidité puis change la valeur de l'histograme
+                if (temp.getTemperature() > MIN_SIZE) {
+                    b.setHeight(Math.round((temp.getTemperature() * 100)) / 1000.f);//arondi la vlaeur de temperature à 0.01 pour plus de rapidité puis change la valeur de l'histograme
+                }else {
+                    b.setHeight(MIN_SIZE);
+                }
             }
         }
     }
